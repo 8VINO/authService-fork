@@ -1,0 +1,31 @@
+{
+  "name": "authservice",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Serviço responsável pela autenticação e autorização dos sistemas do projeto de extensão.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PIBEX-2026/authService.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PIBEX-2026/authService/issues"
+  },
+  "homepage": "https://github.com/PIBEX-2026/authService#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  }
+}
