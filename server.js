@@ -9,7 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 const allowedOrigins = [
-    process.env.FRONTEND_URL
+    "http://localhost:5173",
+    "http://localhost:3000"
 ];
 
 app.use(cors({
@@ -28,6 +29,8 @@ app.use(cors({
         allowedHeaders: ['Content-Type', 'Authorization']
     },
 ));
+
+app.use(express.json());
 
 // app.set("trust proxy", 1);
 

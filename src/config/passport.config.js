@@ -11,7 +11,9 @@ passport.use(new GoogleStrategy({
         const email = profile.emails[0].value;
 
         if (!email.endsWith("ifpe.edu.br")) {
-            return done(null, false);
+            return done(null, false, {
+                message: "EMAIL_NAO_AUTORIZADO"
+            });
         }
 
         return done(null, profile);
