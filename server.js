@@ -4,6 +4,7 @@ import session from 'express-session';
 import cors from 'cors';
 import passport from './src/config/passport.config.js';
 import authRoutes from './src/routes/auth.route.js';
+import { sequelize } from './src/config/sequelize.config.js';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -33,6 +34,13 @@ app.use(cors({
 app.use(express.json());
 
 // app.set("trust proxy", 1);
+
+try {
+    await sequelize.authenticate();
+    console.log('Banco conectado');
+} catch (error) {
+    console.error('Erro ao conectar no banco:', error);
+}
 
 app.use(
     session({

@@ -1,47 +1,97 @@
 import passport from "passport";
-import { isAllowedRedirect } from '../utils/redirect.util.js';
+import { buscarClientPorId } from '../services/client.service.js';
 
-export const googleCallback = (req, res) => {
+export const googleAuth = async (req, res, next) => {
 
-    let state;
+    try {
+        
+        const clientId = req.query.clientId;
+
+        if (!clientId) return res.status(400).json({ error: "ClientId obrigatório" });
+
+        const client = await buscarClientPorId(clientId);
+
+        if (!client) return res.status(404).json({ error: "Client inválido" });
+
+        const originHeader = req.headers.origin || req.headers.referer;
+
+        if (!originHeader) return res.status(403).json({ error: "Origin ausente" });
+
+        const origin = new URL(originHeader).origin;
+        const allowed = new URL(client.baseUrl).origin;
+
+        if (origin !== allowed) return res.status(403).json({ error: "Front não autorizado" });
+
+        req.session.clientId = clientId;
+
+        passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+
+    } catch {
+        return res.status(500).json({ error: "Erro interno" });
+    }
+};
+
+export const googleCallback = (req, res, next) => {
+
+    passport.authenticate("google", { session: true }, async (err, user) => {
+
+        try {
+            
+            const clientId = req.session.clientId;
+
+            const client = await buscarClientPorId(clientId);
+
+            if (!client) return res.status(400).json({ error: "Client inválido" });
+
+            if (err || !user) {
+                return res.redirect(`${client.baseUrl}/login?error=email_nao_autorizado`);
+            }
+
+            req.login(user, (err) => {
+
+                if (err) return next(err);
+
+                req.session.clientId = clientId;
+
+                return res.redirect(`${client.baseUrl}/home`);
+
+            });
+
+        } catch {
+            return res.status(500).json({ error: "Erro interno" });
+        }
+
+    })(req, res, next);
+};
+
+export const logout = async (req, res) => {
 
     try {
 
-        if (!req.query.state) {
-            throw new Error();
-        }
+        const { clientId } = req.body;
 
-        state = JSON.parse(req.query.state);
+        if (!clientId) return res.status(400).json({ error: "ClientId é obrigatório" });
+
+        const client = await buscarClientPorId(clientId);
+
+        if (!client) return res.status(400).json({ error: "Client inválido" });
+
+        req.logout((err) => {
+            if (err) return res.status(500).json({ error: "Erro ao encerrar sessão" });
+
+            req.session.destroy((err) => {
+                if (err) return res.status(500).json({ error: "Erro ao encerrar sessão" });
+
+                res.clearCookie('connect.sid');
+
+                return res.json({ redirectUrl: `${client.baseUrl}/login` });
+            });
+        });
+
     } catch {
-        return res.status(400).json({
-            error: "State inválido"
-        });
+        return res.status(500).json({ error: "Erro interno" });
     }
 
-    res.redirect(state.success);
-};
-
-export const logout = (req, res) => {
-
-    const redirectUrl = req.body.redirectUrl;
-
-    if (!isAllowedRedirect(redirectUrl)) {
-        return res.status(400).json({
-            error: "Redirect inválido"
-        });
-    }
-
-    req.logout((err) => {
-        if (err) return res.status(500).json(err);
-
-        req.session.destroy((err) => {
-            if (err) return res.status(500).json(err);
-
-            res.clearCookie('connect.sid');
-
-            return res.json({ redirectUrl });
-        });
-    });
 };
 
 export const me = (req, res) => {
