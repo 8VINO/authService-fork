@@ -66,7 +66,7 @@ export const googleCallback = (req, res, next) => {
 
                 if (err) return next(err)
 
-                return res.redirect(`${client.baseUrl}/home`);
+                return res.redirect(`${client.baseUrl}/auth-callback`);
 
             });
 
@@ -108,7 +108,7 @@ export const logout = async (req, res) => {
 };
 
 export const me = (req, res) => {
-
+      
     return res.json({
         autenticado: true,
         usuario: req.user
