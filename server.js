@@ -34,7 +34,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
 
 try {
     await sequelize.authenticate();
@@ -49,10 +49,10 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            sameSite: 'lax',
+            sameSite: 'none',
             maxAge: 1000 * 60 * 60,
             httpOnly: true,
-            secure: false
+            secure: true
 
         }
     })
