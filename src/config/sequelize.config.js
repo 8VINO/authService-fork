@@ -1,7 +1,14 @@
 import { Sequelize } from "sequelize";
+import dbConfig from './db.config.js';
+export const sequelize = new Sequelize(dbConfig.NAME,
+    dbConfig.USER,
+    dbConfig.PASSWORD,
 
-export const sequelize = new Sequelize({
-    dialect: "sqlite",
-    storage: "./src/database/database.sqlite",
-    logging: false
-});
+    {
+        host: dbConfig.HOST,
+        port: dbConfig.PORT,
+        dialect: dbConfig.dialect,
+        dialectOptions: dbConfig.dialectOptions,
+        logging: false
+    }
+);
