@@ -49,10 +49,12 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            sameSite: 'none',
+
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 1000 * 60 * 60,
             httpOnly: true,
-            secure: true
+            secure: process.env.NODE_ENV === 'production',
+            ...(process.env.NODE_ENV === 'production' && { domain: process.env.COOKIE_DOMAIN })
 
         }
     })
