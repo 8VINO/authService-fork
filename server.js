@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 8080;
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "https://gestaoestagios-frontend.onrender.com"
 ];
 
 app.use(cors({
@@ -50,9 +51,7 @@ app.use(
         cookie: {
             sameSite: 'lax',
             maxAge: 1000 * 60 * 60,
-            httpOnly: true,
-            secure: false
-
+            httpOnly: true
         }
     })
 );

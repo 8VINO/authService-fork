@@ -12,6 +12,13 @@ module.exports = {
         base_url: 'http://localhost:5173',
         created_at: new Date(),
         updated_at: new Date()
+      },
+      {
+        id: randomUUID(),
+        name: 'Gestão de Estágios',
+        base_url: 'https://gestaoestagios-frontend.onrender.com',
+        created_at: new Date(),
+        updated_at: new Date()
       }
     ]);
   },

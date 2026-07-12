@@ -1,5 +1,6 @@
 import passport from "passport";
 import { buscarClientPorId } from '../services/client.service.js';
+import { gerarToken } from "../services/jwt.service.js";
 import { randomUUID } from 'crypto';
 
 export const googleAuth = async (req, res, next) => {
@@ -48,7 +49,7 @@ export const googleCallback = (req, res, next) => {
 
     delete req.session.oauthState;
 
-    passport.authenticate("google", { session: true }, async (err, user) => {
+    passport.authenticate("google", async (err, user) => {
 
         try {
 
@@ -56,22 +57,32 @@ export const googleCallback = (req, res, next) => {
 
             const client = await buscarClientPorId(clientId);
 
-            if (!client) return res.status(403).json({ error: "Cliente não autorizado" });
-
-            if (err || !user) {
-                return res.redirect(`${client.baseUrl}/login?error=email_nao_autorizado`);
+            if (!client) {
+                return res.status(403).json({
+                    error: "Cliente não autorizado"
+                });
             }
 
-            req.login(user, (err) => {
+            if (err || !user) {
+                return res.redirect(
+                    `${client.baseUrl}/login?error=email_nao_autorizado`
+                );
+            }
 
-                if (err) return next(err)
-
-                return res.redirect(`${client.baseUrl}/auth-callback`);
-
+            const token = gerarToken({
+                googleId: user.id,
+                email: user.emails[0].value,
+                nome: user.displayName
             });
 
+            return res.redirect(
+                `${client.baseUrl}/auth-callback?token=${token}`
+            );
+
         } catch {
-            return res.status(500).json({ error: "Erro interno" });
+            return res.status(500).json({
+                error: "Erro interno"
+            });
         }
 
     })(req, res, next);
@@ -108,10 +119,9 @@ export const logout = async (req, res) => {
 };
 
 export const me = (req, res) => {
-      
+
     return res.json({
         autenticado: true,
         usuario: req.user
     });
-
 };
