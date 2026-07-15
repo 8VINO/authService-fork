@@ -14,8 +14,8 @@ module.exports = {
         updated_at: new Date()
       },
       {
-        id: randomUUID(),
-        name: 'Client',
+        id: '884af13e-ea83-44d6-ab0d-26d8f41f249a',
+        name: 'Gestão de Estágios',
         base_url: 'https://gestaoestagios-frontend.onrender.com',
         created_at: new Date(),
         updated_at: new Date()

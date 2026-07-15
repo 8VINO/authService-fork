@@ -34,7 +34,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
 
 try {
     await sequelize.authenticate();
@@ -52,10 +52,7 @@ app.use(
 
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: 1000 * 60 * 60,
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            ...(process.env.NODE_ENV === 'production' && { domain: process.env.COOKIE_DOMAIN })
-
+            httpOnly: true
         }
     })
 );
